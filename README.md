@@ -110,8 +110,3 @@ This repository is part of my journey to better understand the **mathematics beh
 
 Contributions, suggestions, and improvements are welcome.
 
----
-
-## 📄 License
-
-MIT License
