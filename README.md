@@ -95,7 +95,7 @@ pip install numpy matplotlib
 Run an example:
 
 ```bash
-python linear_regression/linear_regression.py
+python LinearRegression/model.py
 ```
 
 ---
