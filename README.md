@@ -61,8 +61,8 @@ ml-from-scratch
 ├── kmeans
 │   └── kmeans.py
 │
-└── utils
-    └── metrics.py
+└── metrics
+    └── regression.py
 ```
 
 ---
