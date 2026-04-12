@@ -19,7 +19,6 @@ class LinearRegression:
       y_pred = X @ self.w + self.b
 
       #Gradient descent
-
       error = y_pred - y
 
       dw = (1/n_samples) * (X.T @ error)
