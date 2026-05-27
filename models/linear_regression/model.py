@@ -1,18 +1,18 @@
 import numpy as np
 
 class LinearRegression:
-  def __init__(self, n_iters, learning_rate=0.01, b = 0.0):
+  def __init__(self, n_iters = 1000, learning_rate=0.01):
     self.learning_rate = learning_rate
     self.n_iters = n_iters
     self.losses = []
-    self.b = b
+    self.b = 0.0
 
   def fit(self,X,y):
-    if(len(X) != 2):
+    if(len(X.shape) != 2):
       raise ValueError("X must be a 2D array")
-    if(len(y) != 1):
+    if(len(y.shape) != 1):
       raise ValueError("y must be a 1D array")
-    if(len(X) != len(y)):
+    if(X.shape[0] != y.shape[0]):
       raise ValueError("X and y must have the same number of samples")
     n_samples, n_features = X.shape
     self.w = np.zeros(n_features)
