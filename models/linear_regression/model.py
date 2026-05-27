@@ -8,11 +8,19 @@ class LinearRegression:
     self.b = b
 
   def fit(self,X,y):
+    if(len(X) != 2):
+      raise ValueError("X must be a 2D array")
+    if(len(y) != 1):
+      raise ValueError("y must be a 1D array")
+    if(len(X) != len(y)):
+      raise ValueError("X and y must have the same number of samples")
     n_samples, n_features = X.shape
     self.w = np.zeros(n_features)
     #Feature standarization (Z-score normalization)
     self.mean = np.mean(X, axis=0)
     self.std = np.std(X, axis=0)
+    #To avoid division by zero in case of constant features
+    self.std[self.std == 0] = 1
     X = (X - self.mean) / self.std
     for _ in range(self.n_iters):
       #Prediction
