@@ -24,3 +24,12 @@ def TSS(y_true, y_pred):
 
 def r_squared(y_true,y_pred):
     return 1 - (RSS(y_true,y_pred)/TSS(y_true,y_pred))
+
+
+def precision(y_true, y_pred):
+    tp = np.sum((y_true == 1) & (y_pred == 1))
+    fp = np.sum((y_true == 0) & (y_pred == 1))
+    return tp / (tp+fp)
+    
+def accuracy(y_true, y_pred):
+    return np.mean(y_pred == y_true)
