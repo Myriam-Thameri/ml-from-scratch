@@ -1,12 +1,15 @@
 import numpy as np
 from optimizers.adaptive import AdaptiveSGD
 class LinearRegression:
-  def __init__(self, learning_rate=0.01,verbose=False,max_iters=100000):
+  def __init__(self, learning_rate=0.01,verbose=False,max_iters=100000, patience = 10 , toleration = 1e-6):
     self.learning_rate = learning_rate
     self.losses = []
     self.b = 0.0
     self.verbose=verbose
     self.max_iters = max_iters
+    self.optimizer = AdaptiveSGD(lr=learning_rate)
+    self.patience = patience
+    self.toleration = toleration
 
 
 
@@ -28,9 +31,6 @@ class LinearRegression:
     #To avoid division by zero in case of constant features
     self.std[self.std == 0] = 1
     X = self.scale(X)
-    tol = 1e-6
-    patience = 10
-
     best_loss = float("inf")
     wait = 0
     iteration = 0
@@ -40,20 +40,19 @@ class LinearRegression:
         y_pred = X @ self.w + self.b
         error = y_pred - y
         loss = np.mean(error ** 2)
+        self.losses.append(loss)
         dw = (1/n_samples) * (X.T @ error)
         db = (1/n_samples) * np.sum(error)
-        lr = self.learning_rate / (1 + 0.001 * iteration)
-        self.w -= lr * dw
-        self.b -= lr * db
+        self.w, self.b = self.optimizer.update(self.w,self.b,dw,db,iteration,loss)
 
         # improvement check
-        if best_loss - loss > tol:
+        if best_loss - loss > self.toleration:
             best_loss = loss
             wait = 0
         else:
             wait += 1
 
-        if wait >= patience:
+        if wait >= self.patience:
             print("Converged: early stopping")
             break
 
