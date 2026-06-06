@@ -1,8 +1,7 @@
 import numpy as np
 from models.linear_regression.model import LinearRegression
 from metrics.regression import mean_absolute_error, root_mean_squared_error
-import matplotlib as plt
-
+from sklearn import linear_model
 #Housing prices
 X = np.array([
     [1200, 3, 20],
@@ -20,7 +19,8 @@ y = np.array([
     480000
 ])
 
-model = LinearRegression(n_iters=1000, learning_rate=0.01, verbose=True)
+
+model = LinearRegression(learning_rate=0.01, verbose=True)
 model.fit(X,y)
 predictions = model.predict(X)
 print("Predictions:", predictions)
@@ -29,3 +29,13 @@ rmse = root_mean_squared_error(y, predictions)
 
 print(f"Mean Absolute Error: ${mae:,.2f}")
 print(f"Root Mean Squared Error: ${rmse:,.2f}")
+
+
+sklearn_model = linear_model.LinearRegression()
+sklearn_model.fit(X,y)
+sklearn_predictions = sklearn_model.predict(X)
+print(sklearn_predictions)
+sklearn_mae = mean_absolute_error(y,sklearn_predictions)
+sklearn_rmse = root_mean_squared_error(y,sklearn_predictions)
+print(f"Mean Absolute Error: ${sklearn_mae:,.2f}")
+print(f"Root Mean Squared Error: ${sklearn_rmse:,.2f}")

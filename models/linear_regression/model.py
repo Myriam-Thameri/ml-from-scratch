@@ -1,12 +1,17 @@
 import numpy as np
-
+from optimizers.adaptive import AdaptiveSGD
 class LinearRegression:
-  def __init__(self, n_iters = 1000, learning_rate=0.01,verbose=False):
+  def __init__(self, learning_rate=0.01,verbose=False,max_iters=100000):
     self.learning_rate = learning_rate
-    self.n_iters = n_iters
     self.losses = []
     self.b = 0.0
     self.verbose=verbose
+    self.max_iters = max_iters
+
+
+
+  def scale(self,X):
+    return (X - self.mean) / (self.std + 1e-8)
 
   def fit(self,X,y):
     if(len(X.shape) != 2):
@@ -22,26 +27,38 @@ class LinearRegression:
     self.std = np.std(X, axis=0)
     #To avoid division by zero in case of constant features
     self.std[self.std == 0] = 1
-    X = (X - self.mean) / self.std
-    for iteration in range(self.n_iters):
+    X = self.scale(X)
+    tol = 1e-6
+    patience = 10
 
-      #Prediction
-      y_pred = X @ self.w + self.b
+    best_loss = float("inf")
+    wait = 0
+    iteration = 0
 
-      #Gradient descent
-      error = y_pred - y
+    while iteration < self.max_iters:
 
-      dw = (1/n_samples) * (X.T @ error)
-      db = (1/n_samples) * np.sum(error)
-      loss = np.mean((error ** 2))
-      #Store loss
-      self.losses.append(loss)
+        y_pred = X @ self.w + self.b
+        error = y_pred - y
+        loss = np.mean(error ** 2)
+        dw = (1/n_samples) * (X.T @ error)
+        db = (1/n_samples) * np.sum(error)
+        lr = self.learning_rate / (1 + 0.001 * iteration)
+        self.w -= lr * dw
+        self.b -= lr * db
 
-      if self.verbose:
-        print(f"Iteration {iteration} | Loss: {loss:.4f}")
-      #Update weight + bias
-      self.w = self.w - (self.learning_rate * dw )
-      self.b = self.b - (self.learning_rate * db)
+        # improvement check
+        if best_loss - loss > tol:
+            best_loss = loss
+            wait = 0
+        else:
+            wait += 1
+
+        if wait >= patience:
+            print("Converged: early stopping")
+            break
+
+        iteration += 1
+    return self
 
   def predict(self,X):
     X = (X - self.mean) / self.std
