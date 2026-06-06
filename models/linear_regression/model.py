@@ -16,7 +16,8 @@ class LinearRegression:
   def scale(self,X):
     return (X - self.mean) / (self.std + 1e-8)
 
-  def fit(self,X,y):
+  def fit(self,X,y,regularizer=None,lambda_=0.01):
+    
     if(len(X.shape) != 2):
       raise ValueError("X must be a 2D array")
     if(len(y.shape) != 1):
@@ -40,8 +41,16 @@ class LinearRegression:
         y_pred = X @ self.w + self.b
         error = y_pred - y
         loss = np.mean(error ** 2)
+        if(regularizer == 'L2'):
+          loss += lambda_ * np.sum(self.w ** 2)
+        elif(regularizer == 'L1'):
+          loss += lambda_ * np.sum(np.abs(self.w))
         self.losses.append(loss)
         dw = (1/n_samples) * (X.T @ error)
+        if regularizer == "L2":
+          dw += 2 * lambda_ * self.w
+        elif regularizer == "L1":
+          dw += lambda_ * np.sign(self.w)
         db = (1/n_samples) * np.sum(error)
         self.w, self.b = self.optimizer.update(self.w,self.b,dw,db,iteration,loss)
 
