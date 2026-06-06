@@ -1,11 +1,12 @@
 import numpy as np
 
 class LinearRegression:
-  def __init__(self, n_iters = 1000, learning_rate=0.01):
+  def __init__(self, n_iters = 1000, learning_rate=0.01,verbose=False):
     self.learning_rate = learning_rate
     self.n_iters = n_iters
     self.losses = []
     self.b = 0.0
+    self.verbose=verbose
 
   def fit(self,X,y):
     if(len(X.shape) != 2):
@@ -22,7 +23,8 @@ class LinearRegression:
     #To avoid division by zero in case of constant features
     self.std[self.std == 0] = 1
     X = (X - self.mean) / self.std
-    for _ in range(self.n_iters):
+    for iteration in range(self.n_iters):
+
       #Prediction
       y_pred = X @ self.w + self.b
 
@@ -31,10 +33,12 @@ class LinearRegression:
 
       dw = (1/n_samples) * (X.T @ error)
       db = (1/n_samples) * np.sum(error)
-
+      loss = np.mean((error ** 2))
       #Store loss
-      self.losses.append(np.mean(error ** 2))
+      self.losses.append(loss)
 
+      if self.verbose:
+        print(f"Iteration {iteration} | Loss: {loss:.4f}")
       #Update weight + bias
       self.w = self.w - (self.learning_rate * dw )
       self.b = self.b - (self.learning_rate * db)
